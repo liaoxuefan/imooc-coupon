@@ -1,0 +1,54 @@
+
+
+
+spring:
+  application:
+    # 微服务名
+    name: coupon-eureka
+  # 声明这是server1的配置，然后java -jar --spring.profiles.active=server1指定以该配置启动
+  profiles: server1
+server:
+  port: 8001
+
+eureka:
+  instance:
+    hostname: server1
+    prefer-ip-address: false
+  client:
+    # 设置eureka server所在地址
+    service-url:
+      defaultZone: http://server2:8002/eureka/,http://server3:8003/eureka/
+---
+spring:
+  application:
+    # 微服务名
+    name: coupon-eureka
+  profiles: server2
+server:
+  port: 8002
+
+eureka:
+  instance:
+    hostname: server2
+    prefer-ip-address: false
+  client:
+    # 设置eureka server所在地址
+    service-url:
+      defaultZone: http://server1:8001/eureka/,http://server3:8003/eureka/
+---
+spring:
+  application:
+    # 微服务名
+    name: coupon-eureka
+  profiles: server3
+server:
+  port: 8003
+
+eureka:
+  instance:
+    hostname: server3
+    prefer-ip-address: false
+  client:
+    # 设置eureka server所在地址
+    service-url:
+      defaultZone: http://server1:8001/eureka/,http://server2:8002/eureka/

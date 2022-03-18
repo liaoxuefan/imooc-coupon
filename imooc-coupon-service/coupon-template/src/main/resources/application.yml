@@ -1,0 +1,63 @@
+server:
+  port: 8005
+  servlet:
+    context-path: /coupon-template # 所有请求的前缀
+
+spring:
+  application:
+    name: eureka-client-coupon-template
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.show_sql: true
+      hibernate.format_sql: true
+    open-in-view: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/coupon?autoReconnect=true&userUnicode=true&characterEncoding=utf-8&userSSL=false
+    username: root
+    password: 123456
+    type: com.zaxxer.hikari.HikariDataSource # 配置数据源
+    driver-class-name: com.mysql.jdbc.Driver
+    hikari:
+      maximum-pool-size: 8
+      minimum-idle: 4 # 池中维护的最少空闲连接
+      idle-timeout: 30000 # 允许在池中的最长空闲时间
+      connection-timeout: 30000
+      max-lifetime: 45000 # 池中连接的最长生命周期
+      auto-commit: true
+      pool-name: ImoocCouponHikariCP
+  redis:
+    database: 0 # 数据库id，有16个，默认为id为0的数据库
+    host: 127.0.0.1
+    port: 6379
+    timeout: 10000
+#    password: 123456
+  cloud:
+    inetutils:
+      timeout-seconds: 10
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://server1:8000/eureka/
+
+# 监控端点的配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*" # 所有端点暴露
+
+# 访问http://localhost:8005/actuator/info时返回的信息
+# 或者localhost:8005/{server.servlet.context-path}/actuator/info
+info:
+  app:
+    name: imooc-coupon-template
+    groupId: imooc-coupon-service
+    artifactId: coupon-template
+    version: 1.0-SNAPSHOT
+logging:
+  level:
+    com.imooc.coupon: debug # 高于debug级别的日志会打印

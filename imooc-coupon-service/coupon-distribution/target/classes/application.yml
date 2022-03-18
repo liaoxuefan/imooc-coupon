@@ -1,0 +1,69 @@
+server:
+  port: 8006
+  servlet:
+    context-path: /coupon-distribution
+
+spring:
+  application:
+    name: eureka-client-coupon-distribution
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.show_sql: true
+      hibernate.format_sql: true # 格式化sql，避免单行打印
+    open-in-view: false
+  datasource:
+    url: jdbc:mysql://localhost:3306/coupon?autoReconnect=true&userUnicode=true&characterEncoding=utf-8&userSSL=false
+    username: root
+    password: 123456
+    type: com.zaxxer.hikari.HikariDataSource # 配置数据源
+    driver-class-name: com.mysql.jdbc.Driver
+    hikari:
+      maximum-pool-size: 8
+      minimum-idle: 4 # 池中维护的最少空闲连接
+      idle-timeout: 30000 # 允许在池中的最长空闲时间
+      connection-timeout: 30000
+      max-lifetime: 45000 # 池中连接的最长生命周期
+      auto-commit: true
+      pool-name: ImoocCouponHikariCP
+  redis:
+    database: 0 # 数据库id，有16个，默认为id为0的数据库
+    host: localhost
+    port: 6379
+    timeout: 10000
+
+  kafka:
+    bootstrap-servers:
+      - 127.0.0.1:9092 # 定义列表
+    consumer:
+      group-id: imooc-coupon-x # 消费组
+      auto-offset-reset: latest
+  # 开启 ribbon 重试机制, 即获取服务失败是否从另外一个节点重试
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://server1:8000/eureka/
+
+logging:
+  level:
+    com.imooc.coupon: debug
+
+# feign 相关的配置
+feign:
+  hystrix:
+    enabled: true   # Hystrix 默认是关闭的
+  client:
+    config:
+      default: # 全局的
+        connectTimeout: 2000  # 默认的连接超时时间是 10s
+        readTimeout: 5000
+      eureka-client-coupon-template: # 单独服务的配置
+        connectTimeout: 3000  # 默认的连接超时时间是 10s
+        readTimeout: 5000

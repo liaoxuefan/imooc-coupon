@@ -1,0 +1,34 @@
+server:
+  port: 8004
+spring:
+  application:
+    name: coupon-gateway
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8000/eureka
+
+zuul:
+  prefix: /imooc # 当请求匹配前缀时才会进行代理
+  routes:
+    # 优惠券模板路由配置
+    template:
+      path: /coupon-template/** # 通过path识别这是对模板微服务的请求
+      serviceId: eureka-client-coupon-template # 向模板微服务进行转发，这里写的是模板微服务的应用名
+      strip-prefix: false # 转发后的路径不会去掉path前缀
+      # 为false时，localhost:8004/imooc/coupon-template/template/sdk/all?token=1相当于访问findAllUsableTemplate控制器方法
+    distribution:
+      path: /coupon-distribution/**
+      serviceId: eureka-client-coupon-distribution
+      strip-prefix: false
+    settlement:
+      path: /coupon-settlement/**
+      serviceId: eureka-client-coupon-settlement
+      strip-prefix: false
+  host:
+    connect-timeout-millis: 15000 # 服务器连接超时时间
+    socket-timeout-millis: 60000 # 服务器连接及响应的时间
+
+ribbon:
+  ConnectTimeout: 15000 # 服务器连接超时时间
+  ReadTimeout: 15000 # 服务器连接及响应的时间
